@@ -14,4 +14,4 @@ phases:
       - aws lambda update-function-code --publish --function-name $FunctionName --s3-bucket $BuildSnapshotBucket --s3-key deployment/$CODEBUILD_RESOLVED_SOURCE_VERSION --query 'Version' --output text
 cache:
   paths:
-    - 'lambda/node_modules/**/*'
+    - 'node_modules/**/*'
