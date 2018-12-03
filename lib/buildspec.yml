@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - npm install
+
+  post_build:
+    commands:
+      - aws s3 rm s3://$BuildSnapshotBucket/deployment/ --recursive
+      - zip -r -q ../$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - cd ..
+      - aws s3 cp --quiet $CODEBUILD_RESOLVED_SOURCE_VERSION.zip s3://$BuildSnapshotBucket/deployment/$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - aws lambda update-function-code --publish --function-name $FunctionName --s3-bucket $BuildSnapshotBucket --s3-key deployment/$CODEBUILD_RESOLVED_SOURCE_VERSION --query 'Version' --output text
+cache:
+  paths:
+    - 'lambda/node_modules/**/*'
